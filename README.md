@@ -73,9 +73,9 @@ Note:
 
 ![Amazon S3 - Edit static website hosting](https://res.cloudinary.com/rodrigokamada/image/upload/v1642867461/Blog/angular-github-actions-amazon-s3/amazon-s3-step10.png)
 
-**11.** Copy the URL displayed, in my case, the URL `http://angular-github-actions-amazon-s3.s3-website-sa-east-1.amazonaws.com` was displayed because this URL will used to access the Angular application and click on the link *Permissions*.
+**11.** Copy the URL and the region displayed, in my case, the URL `http://angular-github-actions-amazon-s3.s3-website-sa-east-1.amazonaws.com` and the region `sa-east-1` were displayed because the URL will used to access the Angular application and the region will used in the GitHub Actions file setting and click on the link *Permissions*.
 
-![Amazon S3 - Bucket properties](https://res.cloudinary.com/rodrigokamada/image/upload/v1642870828/Blog/angular-github-actions-amazon-s3/amazon-s3-step11.png)
+![Amazon S3 - Bucket properties](https://res.cloudinary.com/rodrigokamada/image/upload/v1642901966/Blog/angular-github-actions-amazon-s3/amazon-s3-step11.png)
 
 **12.** Click on the button *Edit*.
 
@@ -217,8 +217,184 @@ CREATE angular-github-actions-amazon-s3/src/app/app.component.ts (237 bytes)
     Successfully initialized git.
 ```
 
+**2.** Change the `package.json` file and add the scripts below.
+
+```json
+  "build:prod": "ng build --configuration production",
+  "test:headless": "ng test --watch=false --browsers=ChromeHeadless"
+```
+
+**3.** Run the test with the command below.
+
+```shell
+npm run test:headless
+
+> angular-github-actions-amazon-s3@1.0.0 test:headless
+> ng test --watch=false --browsers=ChromeHeadless
+
+⠙ Generating browser application bundles (phase: setup)...22 01 2022 22:11:29.773:INFO [karma-server]: Karma v6.3.11 server started at http://localhost:9876/
+22 01 2022 22:11:29.774:INFO [launcher]: Launching browsers ChromeHeadless with concurrency unlimited
+22 01 2022 22:11:29.781:INFO [launcher]: Starting browser ChromeHeadless
+✔ Browser application bundle generation complete.
+22 01 2022 22:11:37.472:INFO [Chrome Headless 97.0.4692.71 (Linux x86_64)]: Connected on socket 2NkcZwzLS5MNuDnMAAAB with id 98670702
+Chrome Headless 97.0.4692.71 (Linux x86_64): Executed 3 of 3 SUCCESS (0.117 secs / 0.1 secs)
+TOTAL: 3 SUCCESS
+```
+
+**4.** Run the application with the command below. Access the URL `http://localhost:4200/` and check if the application is working.
+
+```shell
+npm start
+
+> angular-github-actions-amazon-s3@1.0.0 start
+> ng serve
+
+✔ Browser application bundle generation complete.
+
+Initial Chunk Files   | Names         |  Raw Size
+vendor.js             | vendor        |   2.00 MB | 
+polyfills.js          | polyfills     | 339.24 kB | 
+styles.css, styles.js | styles        | 213.01 kB | 
+main.js               | main          |  53.27 kB | 
+runtime.js            | runtime       |   6.90 kB | 
+
+                      | Initial Total |   2.60 MB
+
+Build at: 2022-01-23T01:13:06.355Z - Hash: e7a502736b12e783 - Time: 6256ms
+
+** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
+
+
+✔ Compiled successfully.
+```
+
+**5.** Build the application with the command below.
+
+```shell
+npm run build:prod
+
+> angular-github-actions-amazon-s3@1.0.0 build:prod
+> ng build --configuration production
+
+✔ Browser application bundle generation complete.
+✔ Copying assets complete.
+✔ Index html generation complete.
+
+Initial Chunk Files           | Names         |  Raw Size | Estimated Transfer Size
+main.464c3a39ed8b2eb2.js      | main          | 206.10 kB |                56.11 kB
+polyfills.f007c874370f7293.js | polyfills     |  36.27 kB |                11.56 kB
+runtime.8db60f242f6b0a2b.js   | runtime       |   1.09 kB |               603 bytes
+styles.ef46db3751d8e999.css   | styles        |   0 bytes |                       -
+
+                              | Initial Total | 243.46 kB |                68.25 kB
+
+Build at: 2022-01-23T01:14:01.354Z - Hash: cab5f3f1681e58fd - Time: 11304ms
+```
+
+**6.** Let's create and configure the file with the GitHub Actions flow. Create the `.github/workflows/gh-pages.yml` file.
+
+```shell
+mkdir -p .github/workflows
+touch .github/workflows/gh-pages.yml
+```
+
+**7.** Configure the `.github/workflows/gh-pages.yml` file with the content below.
+
+```yaml
+name: GitHub Pages
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: sa-east-1
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests
+      run: npm run test:headless
+
+    - name: Build
+      run: npm run build:prod
+
+    - name: Deploy
+      if: success()
+      run: aws s3 sync ./dist/angular-github-actions-amazon-s3 s3://angular-github-actions-amazon-s3
+```
+
+Notes:
+
+* The `aws-access-key-id` and `aws-secret-access-key` settings were done in the GitHub repository.
+* The `aws-region` setting is the bucket region.
+* The `./dist/angular-github-actions-amazon-s3` setting is the application build folder.
+* The `s3://angular-github-actions-amazon-s3` setting is the bucket name.
+
+**8.** Syncronize the application on the GitHub repository that was created.
+
+![GitHub - Repository](https://res.cloudinary.com/rodrigokamada/image/upload/v1642902812/Blog/angular-github-actions-amazon-s3/angular-github-actions-amazon-s3-step8.png)
+
+**9.** Ready! After synchronizing the application on the GitHub repository, the GitHub Actions build the application and synchronize with Amazon S3 bucket. Access the URL [http://angular-github-actions-amazon-s3.s3-website-sa-east-1.amazonaws.com/](http://angular-github-actions-amazon-s3.s3-website-sa-east-1.amazonaws.com/) and check if the application is working. Replace the URL values with your bucket name and region.
+
+![Angular GitHub Actions Amazon S3](https://res.cloudinary.com/rodrigokamada/image/upload/v1642902979/Blog/angular-github-actions-amazon-s3/angular-github-actions-amazon-s3-step9.png)
+
+
+### Validate the run of the GitHub Actions flow
+
+**1.** Let's validate the run of the GitHub Actions flow. Access the repository [https://github.com/rodrigokamada/angular-github-actions-amazon-s3](https://github.com/rodrigokamada/angular-github-actions-amazon-s3) created and click on the link *Actions*.
+
+![GitHub Actions - Repository](https://res.cloudinary.com/rodrigokamada/image/upload/v1642903246/Blog/angular-github-actions-amazon-s3/github-actions-step1.png)
+
+**2.** Click on the flow runned.
+
+![GitHub Actions - Workflows](https://res.cloudinary.com/rodrigokamada/image/upload/v1642903427/Blog/angular-github-actions-amazon-s3/github-actions-step2.png)
+
+**3.** Click on the job *deploy*.
+
+![GitHub Actions - Jobs](https://res.cloudinary.com/rodrigokamada/image/upload/v1642903880/Blog/angular-github-actions-amazon-s3/github-actions-step3.png)
+
+**4.** Click on each step to validate the run.
+
+![GitHub Actions - Steps](https://res.cloudinary.com/rodrigokamada/image/upload/v1642903976/Blog/angular-github-actions-amazon-s3/github-actions-step4.png)
+
+**5.** Ready! We validate the run of the GitHub Actions flow.
 
 
 
+## Cloning the application
 
+**1.** Clone the repository.
 
+```shell
+git clone git@github.com:rodrigokamada/angular-github-actions-amazon-s3.git
+```
+
+**2.** Install the dependencies.
+
+```shell
+npm ci
+```
+
+**3.** Run the application.
+
+```shell
+npm start
+```
