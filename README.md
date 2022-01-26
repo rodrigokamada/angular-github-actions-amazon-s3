@@ -226,7 +226,7 @@ CREATE angular-github-actions-amazon-s3/src/app/app.component.ts (237 bytes)
 
 **3.** Run the test with the command below.
 
-```shell
+```powershell
 npm run test:headless
 
 > angular-github-actions-amazon-s3@1.0.0 test:headless
@@ -243,7 +243,7 @@ TOTAL: 3 SUCCESS
 
 **4.** Run the application with the command below. Access the URL `http://localhost:4200/` and check if the application is working.
 
-```shell
+```powershell
 npm start
 
 > angular-github-actions-amazon-s3@1.0.0 start
@@ -270,7 +270,7 @@ Build at: 2022-01-23T01:13:06.355Z - Hash: e7a502736b12e783 - Time: 6256ms
 
 **5.** Build the application with the command below.
 
-```shell
+```powershell
 npm run build:prod
 
 > angular-github-actions-amazon-s3@1.0.0 build:prod
@@ -293,7 +293,7 @@ Build at: 2022-01-23T01:14:01.354Z - Hash: cab5f3f1681e58fd - Time: 11304ms
 
 **6.** Let's create and configure the file with the GitHub Actions flow. Create the `.github/workflows/gh-pages.yml` file.
 
-```shell
+```powershell
 mkdir -p .github/workflows
 touch .github/workflows/gh-pages.yml
 ```
@@ -383,18 +383,18 @@ Notes:
 
 **1.** Clone the repository.
 
-```shell
+```powershell
 git clone git@github.com:rodrigokamada/angular-github-actions-amazon-s3.git
 ```
 
 **2.** Install the dependencies.
 
-```shell
+```powershell
 npm ci
 ```
 
 **3.** Run the application.
 
-```shell
+```powershell
 npm start
 ```
