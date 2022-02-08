@@ -1,6 +1,7 @@
 {
   "name": "angular-github-actions-amazon-s3",
   "version": "1.0.0",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "ng": "ng",
