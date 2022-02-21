@@ -39,7 +39,7 @@ Before you start, you need to install and configure the tools:
 
 Note:
 
-* If you don't have an Amazon account, Do steps 1 to 9 of the post *[Authentication using the Amazon Cognito to an Angular application](https://github.com/rodrigokamada/angular-amazon-cognito)* in the session *Create and configure the account on the Amazon Cognito*.
+* If you don't have an Amazon account, do steps 1 to 9 of the post *[Authentication using the Amazon Cognito to an Angular application](https://github.com/rodrigokamada/angular-amazon-cognito)* in the session *Create and configure the account on the Amazon Cognito*.
 
 **3.** Fill in the field *Security check* and click on the button *Submit*.
 
