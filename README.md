@@ -1,7 +1,7 @@
 # Angular GitHub Actions Amazon S3
 
 
-Application example built with [Angular](https://angular.io/) 13 and hosted on [Amazon S3 (Simple Storage Service)](https://aws.amazon.com/s3/) using [GitHub Actions](https://github.com/actions).
+Application example built with [Angular](https://angular.io/) 14 and hosted on [Amazon S3 (Simple Storage Service)](https://aws.amazon.com/s3/) using [GitHub Actions](https://github.com/actions).
 
 This tutorial was posted on my [blog](https://rodrigo.kamada.com.br/blog/hospedando-uma-aplicacao-angular-no-amazon-s3-usando-o-github-actions) in portuguese and on the [DEV Community](https://dev.to/rodrigokamada/hosting-an-angular-application-on-amazon-s3-using-github-actions-3h6g) in english.
 
@@ -325,7 +325,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: 14
+        node-version: 16
 
     - name: Install dependencies
       run: npm install
